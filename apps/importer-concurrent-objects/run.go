@@ -93,6 +93,9 @@ func do(ctx context.Context) error {
 
 	for count.Count() < size {
 		for i := 0; i < batchSize; i++ {
+			if count.Count()+i >= size {
+				break
+			}
 			batcher = batcher.WithObject(&models.Object{
 				ID:    ids[count.Count()+i],
 				Class: "InvertedIndexOnly",
@@ -143,8 +146,8 @@ func queryLoad(stop chan bool, client *weaviate.Client, ids []strfmt.UUID,
 		case <-t:
 			i++
 
-			if i == 10 {
-				// on every tenth request include a GraphQL request
+			if i == 3 {
+				// on every third request include a GraphQL request
 				i = 0
 				sendFilteredReadQuery(client)
 			}
